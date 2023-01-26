@@ -5,14 +5,23 @@ namespace App\Core;
 class Router
 {
     private static $list = [];
+    public static $title;
 
-    public static function page($uri, $pageName)
+    /*
+     * Регистрация роута страницы
+     */
+    public static function page($uri, $pageName, $title)
     {
         self::$list[] = [
             "uri" => $uri,
             "page" => $pageName,
+            "title" => $title,
         ];
     }
+
+    /*
+     * Подключение страницы нужной страницы к роуту
+     */
 
     public static function enable()
     {
@@ -22,8 +31,8 @@ class Router
         {
             if($route['uri'] === '/' . $query)
             {
-                require_once "views/pages/" . $route['page'] . ".php";
-                die();
+                self::$title = $route['title'];
+                Page::view('pages',$route['page']);
             }
         }
 
@@ -32,7 +41,6 @@ class Router
 
     private static function pageNotFound()
     {
-        require_once "views/errors/404.php";
-        die();
+        Page::view('errors','404');
     }
 }
