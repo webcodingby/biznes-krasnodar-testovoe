@@ -3,12 +3,12 @@
 
 namespace App\Core;
 
-
 class App
 {
     public static function start()
     {
         self::libs();
+        $db = new Database();
     }
 
     public static function libs()
@@ -18,10 +18,5 @@ class App
         {
             require_once "libs/" . $lib . ".php";
         }
-    }
-
-    public static function db()
-    {
-
     }
 }

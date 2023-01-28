@@ -11,9 +11,21 @@ class Page
         require_once "views/components/" . $partName . ".php";
     }
 
-    public static function view($part, $pageName)
+    public static function view($pageName, $data = '')
     {
-        require_once "views/". $part . "/" . $pageName . ".php";
-        die();
+        $tasks = ($data) ? $data : '';
+        require_once "views/pages/" . $pageName . ".php";
     }
+
+    public static function admin($pageName,$data = '')
+    {
+        $users = ($data) ? $data : '';
+        require_once "views/admin/" . $pageName . ".php";
+    }
+
+    public static function error($error)
+    {
+        require_once "views/errors/" . $error . ".php";
+    }
+
 }
