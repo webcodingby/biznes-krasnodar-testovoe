@@ -11,8 +11,8 @@ class TasksControllers
 {
     public function index()
     {
-        $db = new DataBase();
-        $tasks = $db->getAll('tasks');
+        $tasks = DataBase::getAll("SELECT * FROM `tasks` WHERE ");
+        var_dump($_SESSION);
         Page::view('tasks', $tasks);
     }
 }

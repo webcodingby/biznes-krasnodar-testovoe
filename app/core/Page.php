@@ -6,20 +6,22 @@ namespace App\Core;
 
 class Page
 {
-    public static function part($partName)
+
+    public static function part($partName, $title = '')
     {
+        $title = ($title) ? $title : '';
         require_once "views/components/" . $partName . ".php";
     }
 
     public static function view($pageName, $data = '')
     {
-        $tasks = ($data) ? $data : '';
+        $data = ($data) ? $data : '';
         require_once "views/pages/" . $pageName . ".php";
     }
 
     public static function admin($pageName,$data = '')
     {
-        $users = ($data) ? $data : '';
+        $data = ($data) ? $data : '';
         require_once "views/admin/" . $pageName . ".php";
     }
 

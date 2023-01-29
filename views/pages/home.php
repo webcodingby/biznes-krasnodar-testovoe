@@ -3,7 +3,7 @@
 use App\Api\UserControllers;
 use App\Core\Page;
 
-    Page::part('head');
+    Page::part('head', 'Вход');
     Page::part('nav');
 ?>
     <div class="container">
@@ -31,22 +31,19 @@ use App\Core\Page;
 $('#form_btn').on('click', function (){
     var email = $('#email').val();
     $.ajax({
-        url: '/api/validate',         /* Куда отправить запрос */
+        url: '/api/auth',         /* Куда отправить запрос */
         method: 'post',             /* Метод запроса (post или get) */
         dataType: 'html',          /* Тип данных в ответе (xml, json, script, html). */
         data: $('#form_auth').serialize(),     /* Данные передаваемые в массиве */
         success: function(data){
-            $('.error_email').addClass('hidden')
-            if(data != 'ok'){
-                $('.error_email').removeClass('hidden')
-            }else{
-                $.post('/api/auth', {email: email}, function(data){
-                   console.log(data);
-                });
+            $('.error_email').addClass('hidden');
+            if(data != 'error'){
+                window.location.href= data;
             }
+            $('.error_email').removeClass('hidden');
         },
         error: function (data, exception) {
-
+            console.log(exception)
         }
     });
 })

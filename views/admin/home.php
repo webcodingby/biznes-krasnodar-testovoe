@@ -4,7 +4,7 @@ use App\Api\UserControllers;
 use App\Controllers\AdminControllers;
 use App\Core\Page;
 $user = 'WCBDY';
-Page::part('head');
+Page::part('head', 'панель администратора');
 Page::part('nav');
 ?>
 <div class="container">

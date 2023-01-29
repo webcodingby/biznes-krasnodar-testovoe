@@ -9,6 +9,9 @@ class App
     {
         self::libs();
         $db = new Database();
+        $db->getDbh();
+        session_start();
+        var_dump($_SESSION);
     }
 
     public static function libs()

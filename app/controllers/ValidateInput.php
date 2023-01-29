@@ -19,7 +19,7 @@ class ValidateInput
                 $data['status'] = "Invalid email format";
             }
         }
-        echo $data['status'];
-        die();
+        $status = $data['status'];
+        return $status;
     }
 }
