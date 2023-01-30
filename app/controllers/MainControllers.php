@@ -4,13 +4,14 @@
 namespace App\Controllers;
 
 
+use App\Core\DataBase;
 use App\Core\Page;
 
 class MainControllers
 {
     public static function index()
     {
-        Page::view('home');
+        Page::view('pages','home');
         die();
     }
 }

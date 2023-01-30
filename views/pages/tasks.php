@@ -2,72 +2,102 @@
 
 use App\Api\UserControllers;
 use App\Core\Page;
-$count = 0;
-$user = 'Test';
-$class = '';
-$compl = '';
+
+if(!$_SESSION['id']){
+    \App\Core\Router::redirect('/');
+}
 Page::part('head', 'Задачи');
-Page::part('nav');
+Page::part('nav', 'Задачи', $data['user']);
 ?>
 <div class="container">
-    <h2 class="mb-4">Задачи пользователя: <?= $user; ?></h2>
-    <form method="POST" class="mb-4" id="task_form">
-        <div class="row mb-3">
-            <div class="col-3">
-                <label for="task" class="form-label">Task:</label>
+    <div class="row mb-3">
+        <h2 class="mb-4">Пользователь: <?= $data['user']['email']; ?></h2>
+        <div class="mb-4 col-12 d-flex align-content-center" id="task_form">
+            <input class="form-check-input" type="hidden" value="<?=$_SESSION['id'];?>" name="user_id" id="user_id">
+            <div class="col-4">
+                <label for="task" class="form-label">Задача:</label>
                 <input type="text" name="task" class="form-control" id="task" required>
-            </div>
-            <div class="col-3">
-                <label for="date" class="form-label">Date:</label>
-                <input type="date" name="date" class="form-control" id="active" required>
-            </div>
-            <div class="mb-3 col-1">
-                <input class="form-check-input" type="checkbox" value="" id="active">
+           </div>
+           <div class="col-4">
+                <label for="date" class="form-label">Дата:</label>
+                <input type="date" name="date" class="form-control" id="date" required>
+           </div>
+           <div class="mb-3 col-2 d-flex justify-content-center align-content-center">
+                <input class="form-check-input" name="active" type="checkbox" value="0" id="active">
                 <label class="form-check-label" for="active">
-                    Active
+                   Важное
                 </label>
-            </div>
-            <div class="mb-3 col-1">
-                <button type="button" id="task_btn" class="btn btn-primary">Add</button>
+           </div>
+            <div class="w-100">
+                <div id="task_btn" class="btn btn-primary mt-2 d-flex justify-content-center align-content-center">Добавить</div>
             </div>
         </div>
-        <div class="row">
-            <h3>List Task</h3>
+    </div>
+
+    <script>
+        var frm = $('#task_form');
+        $('#task_btn').click(function(){
+            $.ajax({
+                type: ('POST'),
+                url: ('/api/task/post'),
+                data: {
+                    user_id: $('#user_id').val(),
+                    task: $('#task').val(),
+                    date: $('#date').val(),
+                    active: $('#active').val(),
+                },
+                success: function (data) {
+                    console.log('Submission was successful.');
+                    console.log(data);
+                },
+                error: function (data) {
+                    console.log('An error occurred.');
+                    console.log(data);
+                },
+            });
+        })
+    </script>
+
+    <div class="row">
+        <h3>Задачи</h3>
+        <?php if(!empty($data['data'])):?>
             <table class="table">
                 <thead>
                     <tr >
-                        <th scope="col">id</th>
-                        <th scope="col">Task</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Delete</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Comlit</th>
+                        <th scope="col">Задача</th>
+                        <th scope="col">Дата</th>
+                        <th scope="col">Удалить</th>
+                        <th scope="col">Редактировать</th>
+                        <th scope="col">Выполнено</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($tasks as $task):?>
+                    <?php foreach ($data['data'] as $task):?>
                         <?php
-                            $count++;
-                            if($task['active']){
-                                $class = 'table-primary';
-                            }
-                            if($task['complited']){
-                                $compl = 'table-warning';
-                            }
+                            $task['active'] = ($task['active']) ? 'table-primary' : '';
+                            $task['complited'] = ($task['complited']) ? 'text-decoration-line-through' : '';
                         ?>
-                        <tr class="<?= $class;?> <?= $compl;?>">
-                            <th><?= $count;?></th>
-                            <td><?= $task['text'];?></td>
+                        <tr class="<?= $task['active'];?> <?=  $task['complited'];?>">
+                            <td><?= $task['task'];?></td>
                             <td><?= $task['date'];?></td>
-                            <td><button>Delete</button></td>
-                            <td><button>Edit</button></td>
-                            <td><button>Comlit</button></td>
+                            <td><button class="btn btn-danger">Удалить</button></td>
+                            <td><button class="btn btn-primary">Редактировать</button></td>
+                            <td><button class="btn btn-success">Выполнено</button></td>
                         </tr>
                     <?php endforeach?>
                 </tbody>
             </table>
-        </div>
-    </form>
+            <?php if($data['pagesCount'] > 1):?>
+                <div style="text-align: center">
+                    <?php for ($pageNum = 1; $pageNum <= $data['pagesCount']; $pageNum++): ?>
+                        <a href="?page=<?= $pageNum === 1 ? '' : $pageNum ?>"><?= $pageNum ?></a>
+                    <?php endfor; ?>
+                </div>
+            <?php endif;?>
+        <?php else:?>
+            <span>Добавьте задачи</span>
+        <?php endif; ?>
+    </div>
 </div>
 <?php
 Page::part('footer');

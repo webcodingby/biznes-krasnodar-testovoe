@@ -3,15 +3,13 @@
 namespace App\Controllers;
 
 use App\Core\DataBase;
+use App\Core\Router;
 
-class Auth extends ValidateInput
+class Auth
 {
-    public static function authLogin($data, $params)
+    public static function logout()
     {
-        ValidateInput::validateEmail($data);
-        $db = new DataBase();
-        $stmt = $db->query('SELECT name FROM users WHERE email = ?', $params);
-        $stmt->execute(array($data['email']));
-
+        unset($_SESSION['id']);
+        Router::redirect('/');
     }
 }

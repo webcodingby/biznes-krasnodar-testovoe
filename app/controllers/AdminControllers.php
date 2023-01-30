@@ -11,9 +11,13 @@ class AdminControllers
 {
     public function index()
     {
-        $db = new DataBase();
-        $users = $db->getAll('users');
-        Page::admin('home', $users);
+        $data['data'] = DataBase::getAll("SELECT email, COUNT(tasks.user_id) 
+                                                AS count FROM users 
+                                                JOIN tasks 
+                                                ON users.id = tasks.user_id 
+                                                GROUP BY email;");
+        $data['user'] = DataBase::getRow("SELECT * FROM `users` WHERE `id`='".$_SESSION['id']."'");
+        Page::view('admin', 'home', $data);
         die();
     }
 

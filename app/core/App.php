@@ -3,6 +3,9 @@
 
 namespace App\Core;
 
+use App\Core\DB;
+use App\Models\Task;
+
 class App
 {
     public static function start()
@@ -10,8 +13,6 @@ class App
         self::libs();
         $db = new Database();
         $db->getDbh();
-        session_start();
-        var_dump($_SESSION);
     }
 
     public static function libs()
@@ -22,4 +23,5 @@ class App
             require_once "libs/" . $lib . ".php";
         }
     }
+
 }

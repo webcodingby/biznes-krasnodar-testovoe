@@ -135,4 +135,29 @@ class DataBase
         self::$sth->execute((array) $param);
         return self::$sth->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    public static function insert($table, $columns, $values)
+    {
+        $sql = "INSERT INTO `$table` (".$columns.") VALUES (".$values.")";
+        $affectedRowsNumber = self::$dbh->exec($sql);
+        // если добавлена как минимум одна строка
+        if($affectedRowsNumber > 0 ){
+            echo "Data successfully";
+        }
+    }
+
+    public static function insertTask($task,$date,$user_id,$active) {
+        $sql = "INSERT INTO tasks (
+                   task,
+                   date,
+                   user_id,
+                   active
+                ) VALUES (
+                   'tasks',
+                   '2023-01-31',
+                   1,
+                   1
+                )";
+        return self::getDbh()->exec($sql);
+    }
 }

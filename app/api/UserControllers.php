@@ -14,9 +14,10 @@ use http\Header;
 
 class UserControllers
 {
-    public static function post($data)
+    public static function post($data, $roleId = '')
     {
         $data['status'] = ValidateInput::validateEmail($data);
+        $data['redirect'] = '';
         if($data['status'] != 'ok'){
             echo 'error';
             die();
@@ -26,24 +27,20 @@ class UserControllers
             $id = DataBase::getValue("SELECT `id` FROM `users` WHERE `email`='$email'");
             if($id){
                 $_SESSION['id'] = $id;
-                echo '/tasks';
-                die();
+                ($roleId == 2) ? $data['redirect'] = '/admin' : $data['redirect'] = '/tasks';
             }else{
                 $insert = DataBase::add("INSERT INTO `users` SET `email` = ?", $email);
                 $_SESSION['id'] = $insert;
-                echo '/tasks';
-                die();
             }
+            echo $data['redirect'];
+            die();
         }
     }
 
-    public static function authLogin($data, $params)
-    {
-        $validateResult = ValidateInput::validateEmail($data);
-        $email = $data['email'];
-        $db = new DataBase();
-        $stmt = $db->getRow('users','WHERE email = ?', $data);
-        $stmt->execute(array($data['email']));
 
+    public static function logout($uri){
+        session_destroy();
+        $uri = '/';
+        echo $uri;
     }
 }
