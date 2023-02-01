@@ -145,43 +145,19 @@ class DataBase
 
     public static function updateTask($form, $id): string
     {
-        //$sql = "UPDATE tasks SET task=:task, date=:date, user_id=:user_id, active=:active, done=:done WHERE id=:id";
-
-
-            $data = self::getDbh()->prepare('
+        $data = self::getDbh()->prepare('
                                             UPDATE tasks 
                                             SET task=:task, date=:date, user_id=:user_id, active=:active, done=:done  
                                             WHERE id = :id');
-
-            $data->execute(array(
-                ':task' => $form['task'],
-                ':date' => $form['date'],
-                ':user_id' => $form['user_id'],
-                ':active' => $form['active'],
-                ':done' => $form['done'],
-                ':id' => $id,
-            ));
-
-            return $data->rowCount(); //выведет: 1
-
-
-        $task = $form['task'];
-        $date = $form['date'];
-        $user_id = $form['user_id'];
-        $active = $form['active'];
-        $done = $form['done'];
-        $sql = "UPDATE 
-                    tasks 
-                SET 
-                    task='$task',
-                    date='$date',
-                    user_id='$user_id',
-                    active='$active',
-                    done='$done' 
-                WHERE 
-                    id=$id";
-        $array = [$task,$date,$user_id,$active,$done];
-        return self::getDbh()->prepare($sql)->execute($array);
+        $data->execute(array(
+            ':task' => $form['task'],
+            ':date' => $form['date'],
+            ':user_id' => $form['user_id'],
+            ':active' => $form['active'],
+            ':done' => $form['done'],
+            ':id' => $id,
+        ));
+        return $data->rowCount(); //выведет: 1
     }
 
 
