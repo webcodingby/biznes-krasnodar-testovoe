@@ -7,8 +7,9 @@ namespace App\Core;
 
 class Page
 {
-    public static function part($partName, $title = '', $user = '')
+    public static function part($partName, $title = '', $user = '', $uri = '')
     {
+        $uri = ($_GET['q']) ?? '';
         $title = ($title) ? $title : '';
         $user = ($user) ? DataBase::getRow("SELECT * FROM `users` WHERE `id`='".$_SESSION['id']."'") : '';
         require_once "views/components/" . $partName . ".php";

@@ -24,13 +24,24 @@ Page::part('nav', 'Панель администратора', $data['user']);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($data['data'] as $user):?>
+                <?php foreach ($data['result'] as $user):?>
                     <tr>
                         <td><?= $user['email'];?></td>
-                        <td><?= $user['count'];?></td>
+                        <?php if(!isset($user['count'])):?>
+                            <td>0</td>
+                        <?php else:?>
+                            <td><?= $user['count'];?></td>
+                        <?php endif;?>
                     </tr>
                 <?php endforeach?>
             </tbody>
+            <?php if($data['page'] > 1):?>
+                <div style="text-align: center">
+                    <?php for ($pageNum = 1; $pageNum <= $data['page']; $pageNum++): ?>
+                        <a href="?page=<?= $pageNum === 1 ? '' : $pageNum ?>"><?= $pageNum ?></a>
+                    <?php endfor; ?>
+                </div>
+            <?php endif;?>
         </table>
     </div>
 </div>

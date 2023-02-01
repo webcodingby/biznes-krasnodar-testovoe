@@ -1,0 +1,11 @@
+.hidden{
+    display:none !important;
+}
+
+a{
+    color: #222;
+}
+
+.nav-logout{
+    list-style: none;
+}

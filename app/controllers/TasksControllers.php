@@ -13,17 +13,23 @@ class TasksControllers
 {
     public function index()
     {
+        $id = $_SESSION['id'];
+        Page::view('pages','tasks', self::valuesInit($id));
+    }
+
+    public static function valuesInit($id){
         $itemsPerPage = 5;
         $offset = !empty($_GET['page'])?(($_GET['page']-1)*$itemsPerPage):0;
-        $data = DataBase::getAll("SELECT * FROM `tasks` WHERE `user_id`='".$_SESSION['id']."' ORDER BY date DESC LIMIT $offset,$itemsPerPage");
-        $resultDB = DataBase::getAll("SELECT COUNT(*) AS cnt FROM `tasks` WHERE `user_id`='".$_SESSION['id']."'");
-        $enterRow = intval($resultDB[0]['cnt']);
-        $user = DataBase::getRow("SELECT * FROM `users` WHERE `id`='".$_SESSION['id']."'");
+        $tasks = DataBase::getRequest('tasks', "WHERE user_id=$id","ORDER BY date","LIMIT $offset,$itemsPerPage");
+        $tasksPage = DataBase::getTasksCount("tasks", "WHERE user_id=$id");
+        $enterRow = (int)$tasksPage[0]['count'];
+        $user = DataBase::getRequest("users", "WHERE id=$id");
         $result = ceil($enterRow/$itemsPerPage);
-        Page::view('pages','tasks', [
-            'data' => $data,
-            'user' => $user,
+        $data = [
+            'data' => $tasks,
+            'user' => $user[0],
             'pagesCount' => $result,
-        ]);
+        ];
+        return $data;
     }
 }

@@ -3,9 +3,7 @@
 namespace App\Core;
 
 use App\Api\TaskControllers;
-use App\Api\UserControllers;
-use App\Controllers;
-use App\Controllers\AdminControllers;
+use App\Controllers\TasksControllers;
 
 class Api
 {
@@ -35,9 +33,9 @@ class Api
                         break;
                 }
             }
-        }
-        if($param[1] === 'tasks' && $_SERVER['REQUEST_METHOD'] === 'GET'){
-            TaskControllers::getTasks($_GET);
+            if($param[1] === 'tasks' && $_SERVER['REQUEST_METHOD'] === 'GET'){
+                TaskControllers::getTasks();
+            }
         }
     }
 

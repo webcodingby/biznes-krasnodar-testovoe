@@ -55,7 +55,6 @@ class Router
                     die();
                 }
             }
-            Page::error('404');
         }
     }
 
@@ -70,7 +69,6 @@ class Router
                 die();
             }
         }
-        Page::error('404');
     }
 
     public static function redirect($uri)
