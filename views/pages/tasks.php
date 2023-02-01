@@ -29,8 +29,8 @@ Page::part('nav', 'Задачи', $data['user']);
                 </label>
             </div>
             <div class="form-check hidden col-2 d-flex justify-content-center align-items-center">
-                <input class="form-check-input m-3" type="checkbox" value="0" id="complited">
-                <label class="form-check-label" for="complited">
+                <input class="form-check-input m-3" type="checkbox" value="0" id="done">
+                <label class="form-check-label" for="done">
                     Выполнено
                 </label>
             </div>
@@ -55,10 +55,12 @@ Page::part('nav', 'Задачи', $data['user']);
                 <tbody id="table_tasks">
                     <?php foreach ($data['data'] as $task):?>
                         <?php
-                            $task['active'] = ($task['active']) ? 'table-primary' : '';
-                            $task['done'] = ($task['done']) ? 'text-decoration-line-through' : '';
+                            $active = ($task['active']) ? 'table-primary' : '';
+                            $valActive = ($task['active']) ? '0' : '1';
+                            $done = ($task['done']) ? 'text-decoration-line-through' : '';
+                            $valDone = ($task['done']) ? '0' : '1';
                         ?>
-                        <tr class="task-wrap <?= $task['active']?> <?=$task['done']?>">
+                        <tr class="task-wrap <?= $active?> <?=$done?>">
                             <td>
                                 <span class="task-text"><?= $task['task']?></span>
                                 <input type="text" class="hidden input-task" value="<?= $task['task']?>">
@@ -76,9 +78,17 @@ Page::part('nav', 'Задачи', $data['user']);
                                 </button>
                             </td>
                             <td>
-                                <label class="form-check-label" for="task-complited">
-                                    <button class="btn btn-success btn-complited" onclick="okTask(<?= $task['id']?>)">
-                                        Выполнено
+                                <label class="form-check-label" for="task-done">
+                                    <button
+                                            class="btn btn-success btn-done"
+                                            onclick="okTask(<?= $task['id']?>)"
+                                            data-done="<?=$valDone?>"
+                                    >
+                                        <?php if((int)$valDone === 0 ):?>
+                                            Не выполнено
+                                        <?php else: ?>
+                                            Выполнено
+                                        <?php endif ?>
                                     </button>
                                 </label>
                                 <input class="form-check-input m-3 hidden" type="checkbox" value="0" id="task-complited">

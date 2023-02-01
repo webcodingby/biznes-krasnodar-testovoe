@@ -58,6 +58,17 @@ class Router
         ];
     }
 
+    public static function put($uri, $controller, $method, $formdata = false): void
+    {
+        self::$list[] = [
+            "uri" => $uri,
+            "controller" => $controller,
+            "method" => $method,
+            "action" => "PUT",
+            "formdata" => $formdata
+        ];
+    }
+
     public static function delete($uri, $controller, $method): void
     {
         self::$list[] = [
@@ -75,7 +86,8 @@ class Router
     public static function pageData($data, $query): void
     {
         $param = explode('/', $query);
-        if($param[0] !== 'api'){
+        if($param[0] !== 'api')
+        {
             foreach (self::$list as $route)
             {
                 if($route['uri'] === $query) {
@@ -92,7 +104,8 @@ class Router
     {
         foreach (self::$list as $route)
         {
-            if($route['uri'] === $query) {
+            if($route['uri'] === $query)
+            {
                 $action = new $route['controller'];
                 $method = $route['method'];
                 $action->$method($data);
@@ -112,19 +125,22 @@ class Router
      */
     public static function enable(): void
     {
-        if(isset($_GET['q'])){
+        if(isset($_GET['q']))
+        {
             $query = $_GET['q'];
             $param = explode('/', $query);
-            if($param[0] === 'api'){
-                self::param($param[2]);
+            if($param[0] === 'api')
+            {
                 if($param[1] === 'postTask' && $_SERVER['REQUEST_METHOD'] === 'POST'){
                     TaskControllers::setTask($_POST);
                 }
+                self::param($param[2]);
             }
         }else{
             $query = '/';
         }
-        if($_SERVER['REQUEST_METHOD'] === "POST"){
+        if($_SERVER['REQUEST_METHOD'] === "POST")
+        {
             self::userData($_POST,$query);
         }elseif($_SERVER['REQUEST_METHOD'] === "GET"){
             self::pageData($_GET, $query);
@@ -136,7 +152,7 @@ class Router
      */
     public static function param($param): void
     {
-        header('Content-type: json/application');
+        header('Content-type: application/json');
         if(isset($param)) {
             $id = $param;
             switch ($_SERVER['REQUEST_METHOD']) {
@@ -148,15 +164,33 @@ class Router
                     break;
                 case 'PATCH':
                     $data = file_get_contents('php://input');
-                    $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
-                    TaskControllers::editTask($data, $id);
+                    $data = explode('&', $data);
+                    foreach ($data as $item){
+                        $item = explode('=', $item);
+                        $arr[$item[0]] = $item[1];
+                    }
+                    TaskControllers::updateTask($arr, $id);
                     break;
                 case 'DELETE':
                     TaskControllers::deleteTask($id);
                     break;
                 default:
-                    Page::error('404');
+                    http_response_code(404);
+                    $res =[
+                        'status' => false,
+                        'message' => 'Задача не найдена',
+                    ];
+                    echo json_encode($res, JSON_THROW_ON_ERROR);
+                    die();
             }
+        }else{
+            http_response_code(404);
+            $res =[
+                'status' => false,
+                'message' => 'Задача не найдена',
+            ];
+            echo json_encode($res, JSON_THROW_ON_ERROR);
+            die();
         }
     }
 }

@@ -130,26 +130,60 @@ class DataBase
         return self::getDbh()->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function updateTask($data, $id): string
+    public static function updateTask1($data, $id): string
     {
         $task = $data['task'];
         $date = $data['date'];
         $user_id = $data['user_id'];
         $active = $data['active'];
         $done = $data['done'];
-        $sql = "UPDATE tasks SET `task`=:task,`date`=:date,`user_id`=:user_id,`active`=:active,`done`=:done WHERE `id` = $id";
+        $sql = "UPDATE tasks SET `task`=$task,`date`=$date,`user_id`=$user_id,`active`=$active,`done`=$done WHERE `id` = $id";
         $stmt = self::getDbh()->prepare($sql);
-        $stmt->bindValue(":id", $id);
-        $stmt->bindValue(":task", $task);
-        $stmt->bindValue(":date", $date);
-        $stmt->bindValue(":user_id", $user_id);
-        $stmt->bindValue(":active", $active);
-        $stmt->bindValue(":done",$done);
 
-        $stmt->execute();
-
-        return 'Задача обновлена!';
+        return $stmt->execute($data);
     }
+
+    public static function updateTask($form, $id): string
+    {
+        //$sql = "UPDATE tasks SET task=:task, date=:date, user_id=:user_id, active=:active, done=:done WHERE id=:id";
+
+
+            $data = self::getDbh()->prepare('
+                                            UPDATE tasks 
+                                            SET task=:task, date=:date, user_id=:user_id, active=:active, done=:done  
+                                            WHERE id = :id');
+
+            $data->execute(array(
+                ':task' => $form['task'],
+                ':date' => $form['date'],
+                ':user_id' => $form['user_id'],
+                ':active' => $form['active'],
+                ':done' => $form['done'],
+                ':id' => $id,
+            ));
+
+            return $data->rowCount(); //выведет: 1
+
+
+        $task = $form['task'];
+        $date = $form['date'];
+        $user_id = $form['user_id'];
+        $active = $form['active'];
+        $done = $form['done'];
+        $sql = "UPDATE 
+                    tasks 
+                SET 
+                    task='$task',
+                    date='$date',
+                    user_id='$user_id',
+                    active='$active',
+                    done='$done' 
+                WHERE 
+                    id=$id";
+        $array = [$task,$date,$user_id,$active,$done];
+        return self::getDbh()->prepare($sql)->execute($array);
+    }
+
 
     public static function getTasks($table, $id, $offset, $itemsPerPage): array
     {
@@ -157,12 +191,17 @@ class DataBase
         return self::getDbh()->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function getId($table, $where, $id): int
+    {
+        $sql = "SELECT id FROM $table WHERE $where=`$id`";
+        return self::getDbh()->query($sql)->fetch(PDO::FETCH_ASSOC);
+    }
+
     public static function getTasksCount($table, $where = '', $order = '') : array
     {
         $sql = "SELECT COUNT(*) AS count FROM $table $where $order";
         return self::getDbh()->query($sql)->fetchAll();
     }
-
 
     public static function deleteTask($id): bool|int
     {

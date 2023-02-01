@@ -29,7 +29,7 @@ function postTask()
     }
     $.ajax({
         type: ('POST'),
-        url: ('/api/postTask'),
+        url: ('/api/task/'),
         data: {
             user_id: $('#user_id').val(),
             task: $('#task').val(),
@@ -94,18 +94,15 @@ function editTask(id)
 function okTask(id)
 {
     if (confirm("Вы уверены что хотите выполнить задачу?")) {
-        if($('#complited')[0].checked){
-            $('#complited').val(1)
-        }
         $.ajax({
             type: ('PATCH'),
             url: (`/api/task/${id}`),
             data: {
-                id: id,
-                complited: 1,
+                "id": id,
+                "done": 1,
             },
             success: function (data) {
-                location.reload();
+                //location.reload();
             },
             error: function (data) {
                 console.log('An error occurred.');

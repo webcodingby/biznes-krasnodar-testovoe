@@ -16,10 +16,9 @@ Router::page('admin', AdminControllers::class, 'home');
 
 Router::post('auth', UserControllers::class, 'post', true);
 Router::post('logout', UserControllers::class, 'logout');
-Router::post("api/postTask", TaskControllers::class, "setTask", true);
-Router::get("api/tasks", TaskControllers::class, "getTasks");
+Router::post("api/postTask/", TaskControllers::class, "postTask", true);
 Router::get("api/task/id", TaskControllers::class, "getTask");
-Router::patch("api/task/id", TaskControllers::class, "editTask", true);
+Router::patch("api/task/id", TaskControllers::class, "updateTask", true);
 Router::delete("api/task/id", TaskControllers::class, "deleteTask");
 
 try {
