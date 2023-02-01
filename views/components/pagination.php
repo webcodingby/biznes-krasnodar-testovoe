@@ -26,7 +26,7 @@ for ($x = $initial_num; $x < $condition_limit_num; $x++) {
     if (($x > 0) && ($x <= $total_pages)) {
 
         // текущая страница
-        if ($x == $page) {
+        if ($x === $page) {
             echo "<li class='active'><a href=''>$x <span class='sr-only'></span></a></li>";
         } // НЕ текущая страница
         else {

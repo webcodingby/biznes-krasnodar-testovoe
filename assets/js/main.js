@@ -1,4 +1,5 @@
-function getTasksAjax(){
+function getTasksAjax()
+{
     $.ajax({
         type: ('GET'),
         url: ('api/tasks'),
@@ -19,22 +20,28 @@ function getTasksAjax(){
     });
 }
 
-function postTask(){
+function postTask()
+{
+    if($('#active')[0].checked){
+        $('#active').val(1)
+    }else{
+        $('#active').val(0)
+    }
     $.ajax({
         type: ('POST'),
-        url: ('/api/task'),
+        url: ('/api/postTask'),
         data: {
             user_id: $('#user_id').val(),
             task: $('#task').val(),
             date: $('#date').val(),
             active: $('#active').val(),
-            complited: $('#complited').val(),
+            done: $('#done').val(),
         },
         success: function (data) {
             if (confirm("Вы добавили задачу")) {
-                location.reload();
+                //location.reload();
             }else{
-                location.reload();
+                //location.reload();
             }
         },
         error: function (data) {
@@ -44,7 +51,8 @@ function postTask(){
     });
 }
 
-function deleteTask(id){
+function deleteTask(id)
+{
     if (confirm("Вы уверены что хотите удалить задачу?")) {
         $.ajax({
             type: ('DELETE'),
@@ -61,4 +69,96 @@ function deleteTask(id){
             },
         });
     }
+}
+
+function editTask(id)
+{
+    if (confirm("Вы уверены что хотите удалить задачу?")) {
+        $.ajax({
+            type: ('PATCH'),
+            url: (`/api/task/${id}`),
+            data: {
+                id: id,
+            },
+            success: function (data) {
+                location.reload();
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+    }
+}
+
+function okTask(id)
+{
+    if (confirm("Вы уверены что хотите выполнить задачу?")) {
+        if($('#complited')[0].checked){
+            $('#complited').val(1)
+        }
+        $.ajax({
+            type: ('PATCH'),
+            url: (`/api/task/${id}`),
+            data: {
+                id: id,
+                complited: 1,
+            },
+            success: function (data) {
+                location.reload();
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+    }
+}
+
+function saveTask(id)
+{
+    $('#task').val()
+    $('#date').val()
+    if (confirm("Сохранить изменения?")) {
+        $.ajax({
+            type: ('PATCH'),
+            url: (`/api/task/${id}`),
+            data: {
+                id: id,
+                user_id: $('#user_id').val(),
+                task: $('#task').val(),
+                date: $('#date').val(),
+                active: $('#active').val(),
+                complited: $('#complited').val(),
+            },
+            success: function (data) {
+                location.reload();
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+    }
+}
+
+function authLogin()
+{
+    let email = $('#email').val();
+    $.ajax({
+        url: '/auth',         /* Куда отправить запрос */
+        method: 'post',           /* Тип данных в ответе (xml, json, script, html). */
+        data: {email: email},     /* Данные передаваемые в массиве */
+        success: function(data){
+            if(data != 'error'){
+                $('.error_email').addClass('hidden');
+                window.location.href= data;
+            }else{
+                $('.error_email').removeClass('hidden');
+            }
+        },
+        error: function(jqXHR, textStatus, errorMessage) {
+            console.log(errorMessage); // Optional
+        },
+    });
 }

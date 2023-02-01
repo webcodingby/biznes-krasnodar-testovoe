@@ -1,12 +1,15 @@
 <?php
-(!$_SESSION['id']) ? \App\Core\Router::redirect('/') : '';
-$roleId = ($_SESSION['id']) ? \App\Core\DataBase::getValue("SELECT `role_id` FROM `users` WHERE `id`='".$_SESSION['id']."'") : '';
-($roleId != 2) ? \App\Core\Router::redirect('/tasks') : '';
+
 
 use App\Api\UserControllers;
 use App\Controllers\AdminControllers;
+use App\Core\DataBase;
 use App\Core\Page;
+use App\Core\Router;
 
+(!$_SESSION['id']) ? Router::redirect('/') : '';
+$roleId = ($_SESSION['id']) ? DataBase::getValue("SELECT `role_id` FROM `users` WHERE `id`='".$_SESSION['id']."'") : '';
+((int)$roleId !== 2) ? Router::redirect('/tasks') : '';
 $count = 0;
 
 Page::part('head', 'Панель администратора');
@@ -26,11 +29,11 @@ Page::part('nav', 'Панель администратора', $data['user']);
             <tbody>
                 <?php foreach ($data['result'] as $user):?>
                     <tr>
-                        <td><?= $user['email'];?></td>
+                        <td><?= $user['email']?></td>
                         <?php if(!isset($user['count'])):?>
                             <td>0</td>
                         <?php else:?>
-                            <td><?= $user['count'];?></td>
+                            <td><?= $user['count']?></td>
                         <?php endif;?>
                     </tr>
                 <?php endforeach?>
@@ -41,7 +44,7 @@ Page::part('nav', 'Панель администратора', $data['user']);
                         <a href="?page=<?= $pageNum === 1 ? '' : $pageNum ?>"><?= $pageNum ?></a>
                     <?php endfor; ?>
                 </div>
-            <?php endif;?>
+            <?php endif?>
         </table>
     </div>
 </div>

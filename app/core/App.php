@@ -3,21 +3,18 @@
 
 namespace App\Core;
 
-use App\Core\DB;
-use App\Models\Task;
-
 class App
 {
-    public static function start()
+    public static function start(): void
     {
         self::libs();
         $db = new Database();
-        $db->getDbh();
+        $db::getDbh();
     }
 
-    public static function libs()
+    public static function libs(): void
     {
-        $config = require_once 'config/app.php';
+        $config = require 'config/app.php';
         foreach ($config['libs'] as $lib)
         {
             require_once "libs/" . $lib . ".php";

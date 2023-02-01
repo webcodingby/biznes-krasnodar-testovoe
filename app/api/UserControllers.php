@@ -11,36 +11,49 @@ use App\Core\DataBase;
 use App\Core\Page;
 use App\Core\Router;
 use http\Header;
+use JetBrains\PhpStorm\NoReturn;
 
 class UserControllers
 {
-    public static function post($data, $roleId = '')
+    /**
+     * @throws \JsonException
+     */
+    public static function post($data):void
     {
+
         $data['status'] = ValidateInput::validateEmail($data);
         $data['redirect'] = '';
-        if($data['status'] != 'ok'){
+        if($data['status'] !== 'ok'){
             echo 'error';
-            die();
         }else{
             session_start();
             $email = $data['email'];
-            $id = DataBase::getValue("SELECT `id` FROM `users` WHERE `email`='$email'");
-            if($id){
-                $_SESSION['id'] = $id;
-                ($roleId == 2) ? $data['redirect'] = '/admin' : $data['redirect'] = '/tasks';
+            $user = DataBase::getValue("SELECT `id` FROM `users` WHERE `email`='$email'");
+
+            if($user){
+                $_SESSION['id'] = $user;
+                $roleId = DataBase::getValue("SELECT `role_id` FROM `users` WHERE `email`='$email'");
+                ((int)$roleId === 2) ? $data['redirect'] = '/admin' : $data['redirect'] = '/tasks';
             }else{
-                $insert = DataBase::add("INSERT INTO `users` SET `email` = ?", $email);
+                $data = [
+                    "email" => $data['email'],
+                    "role_id" => 1,
+                ];
+                $insert = DataBase::insert($data,"users (email, role_id)", "(:email, :role_id)");
+
                 $_SESSION['id'] = $insert;
+                $data['redirect'] = '/tasks';
             }
+
             echo $data['redirect'];
-            die();
         }
+        die();
     }
 
 
-    public static function logout($uri){
-        session_destroy();
-        $uri = '/';
-        echo $uri;
+    public static function logout():void
+    {
+        unset($_SESSION['id']);
+        Router::redirect('/');
     }
 }

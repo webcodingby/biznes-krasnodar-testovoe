@@ -4,24 +4,33 @@
 namespace App\Api;
 
 use App\Core\DataBase;
+use JetBrains\PhpStorm\NoReturn;
 
 class TaskControllers
 {
-    public static function getTasks()
+    /**
+     * @throws \JsonException
+     */
+    #[NoReturn] public static function getTasks(): void
     {
         $tasks = DataBase::getRequest("tasks");
-        echo json_encode($tasks);
+        echo json_encode($tasks, JSON_THROW_ON_ERROR);
         die();
     }
 
-    public static function setTask($data){
+    /**
+     * @throws \JsonException
+     */
+    #[NoReturn] public static function setTask($data): void
+    {
+
         $task = $data['task'];
         $date = $data['date'];
         $user_id = (int)$data['user_id'];
         $active = $data['active'] ?? '0';
         $active = (int)$active;
-        $complited = $data['complited'] ?? '0';
-        $complited = (int)$complited;
+        $done = $data['done'] ?? '0';
+        $done = (int)$done;
         if(empty($task)){
             http_response_code(404);
             $res = [
@@ -29,7 +38,7 @@ class TaskControllers
                 'message' => 'Заполните поле задача',
                 'input' => 'task'
             ];
-            echo json_encode($res);
+            echo json_encode($res, JSON_THROW_ON_ERROR);
             die();
         }
 
@@ -40,11 +49,11 @@ class TaskControllers
                 'message' => 'Заполните дату',
                 'input' => 'date'
             ];
-            echo json_encode($res);
+            echo json_encode($res, JSON_THROW_ON_ERROR);
             die();
         }
 
-        $affectedRowsNumber = DataBase::insertTask($task, $date, $user_id, $active, $complited);
+        $affectedRowsNumber = DataBase::insertTask($task, $date, $user_id, $active, $done);
 
         http_response_code(201);
 
@@ -53,30 +62,19 @@ class TaskControllers
             'post_id' => $affectedRowsNumber,
         ];
 
-        echo json_encode($res);
+        echo json_encode($res, JSON_THROW_ON_ERROR);
     }
 
-    public static function editTask($data){
-        $id = $data['id'];
-        $task = $data['task'];
-        $date = $data['date'];
-        $user_id = $data['id'];
-        $active = $data['active'];
-        $complited = $data['complited'];
-
-        $dataDb = DataBase::getTask($data['id']);
+    #[NoReturn] public static function editTask($data, $id): void
+    {
+        $dataDb = DataBase::getTask($id);
         if($dataDb){
-            $data = DataBase::updateTask($data);
-
+            $data = DataBase::updateTask($data, $id);
             http_response_code(200);
-
             $res = [
                 'status' => true,
-                'message' => 'Task update',
+                'message' => $data,
             ];
-
-            echo json_encode($res);
-            die();
         }else{
             http_response_code(404);
 
@@ -85,14 +83,16 @@ class TaskControllers
                 'message' => 'Task not found',
             ];
 
-            echo json_encode($res);
-            die();
         }
+        echo json_encode($res);
+        die();
 
     }
 
-    public static function deleteTask($id){
-        $dataDb = DataBase::getRow("SELECT * FROM `tasks` WHERE `id` = $id");
+
+    #[NoReturn] public static function deleteTask($id): void
+    {
+        $dataDb = DataBase::getTask($id);
         $dataDb = (int)$dataDb;
         if(!empty($dataDb)){
 
@@ -103,26 +103,33 @@ class TaskControllers
                     'status' => true,
                     'message' => $dataDb
                 ];
-                echo json_encode($res);
-                die();
             }else{
                 http_response_code(404);
                 $res = [
                     'status' => false,
                     'message' => "Что-то пошло не так"
                 ];
-                echo json_encode($res);
-                die();
             }
-
-        }else{
-            http_response_code(404);
-            $res = [
-                'status' => false,
-                'message' => "Задача не найдена"
-            ];
             echo json_encode($res);
             die();
+
         }
+
+        http_response_code(404);
+        $res = [
+            'status' => false,
+            'message' => "Задача не найдена"
+        ];
+        echo json_encode($res, JSON_THROW_ON_ERROR);
+        die();
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public static function getTask($id): bool|string
+    {
+        $dataDb = DataBase::getTask($id);
+        return json_encode($dataDb, JSON_THROW_ON_ERROR);
     }
 }

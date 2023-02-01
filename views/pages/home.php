@@ -19,33 +19,9 @@ use App\Core\Page;
                     }
                 </style>
             </div>
-            <div form="form_auth" id="form_btn" class="btn btn-primary">Ok</div>
+            <div id="form_btn" onclick="authLogin()" class="btn btn-primary">Ok</div>
         </div>
     </div>
-
-<script>
-
-$('#form_btn').on('click',function (){
-    var email = $('#email').val();
-    $.ajax({
-        url: 'auth',         /* Куда отправить запрос */
-        method: 'post',           /* Тип данных в ответе (xml, json, script, html). */
-        data: {email: email},     /* Данные передаваемые в массиве */
-        success: function(data){
-            if(data != 'error'){
-                $('.error_email').addClass('hidden');
-                window.location.href= data;
-            }else{
-                $('.error_email').removeClass('hidden');
-            }
-        },
-        error: function(jqXHR, textStatus, errorMessage) {
-            console.log(errorMessage); // Optional
-        },
-    });
-})
-
-</script>
 <?php
     Page::part('footer');
 ?>

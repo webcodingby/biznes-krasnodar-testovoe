@@ -11,9 +11,9 @@ Page::part('nav', 'Задачи', $data['user']);
 ?>
 <div class="container">
     <div class="row mb-3">
-        <h2 class="mb-4">Пользователь: <?= $data['user']['email']; ?></h2>
+        <h2 class="mb-4">Пользователь: <?= $data['user']['email']?></h2>
         <div class="mb-4 col-12 d-flex align-items-center" id="task_form">
-            <input class="form-check-input" type="hidden" value="<?=$data['user']['id'];?>" name="user_id" id="user_id">
+            <input class="form-check-input" type="hidden" value="<?=$data['user']['id']?>" name="user_id" id="user_id">
             <div class="col-5 me-2">
                 <label for="task" class="form-label">Задача:</label>
                 <input type="text" name="task" class="form-control" id="task" required>
@@ -56,35 +56,35 @@ Page::part('nav', 'Задачи', $data['user']);
                     <?php foreach ($data['data'] as $task):?>
                         <?php
                             $task['active'] = ($task['active']) ? 'table-primary' : '';
-                            $task['complited'] = ($task['complited']) ? 'text-decoration-line-through' : '';
+                            $task['done'] = ($task['done']) ? 'text-decoration-line-through' : '';
                         ?>
-                        <tr class="task-wrap <?= $task['active'];?> <?=  $task['complited'];?>"
-                            data-id="<?= $task['id'];?>"
-                            data-userid="<?=$data['user']['id'];?>"
-                        >
+                        <tr class="task-wrap <?= $task['active']?> <?=$task['done']?>">
                             <td>
-                                <span class="task-text"><?= $task['task'];?></span>
-                                <input type="text" class="hidden input-task">
+                                <span class="task-text"><?= $task['task']?></span>
+                                <input type="text" class="hidden input-task" value="<?= $task['task']?>">
                             </td>
                             <td>
-                                <span class="task-date"><?= $task['date'];?></span>
-                                <input type="date" class="hidden input-date">
+                                <span class="task-date"><?= $task['date']?></span>
+                                <input type="date" class="hidden input-date" value ="<?= $task['date']?>">
                             </td>
                             <td>
-                                <button class="btn btn-warning btn-edit" data-id="<?= $task['id'];?>">
+                                <button class="btn btn-warning btn-edit" onclick="editTask(<?= $task['id']?>)">
                                     Редактировать
                                 </button>
-                                <button class="btn btn-info btn-ok hidden" data-id="<?= $task['id'];?>">
+                                <button class="btn btn-info btn-ok hidden" onclick="saveTask(<?= $task['id']?>)">
                                     Сохранить
                                 </button>
                             </td>
                             <td>
-                                <button class="btn btn-success btn-complited" data-id="<?= $task['id'];?>">
-                                    Выполнено
-                                </button>
+                                <label class="form-check-label" for="task-complited">
+                                    <button class="btn btn-success btn-complited" onclick="okTask(<?= $task['id']?>)">
+                                        Выполнено
+                                    </button>
+                                </label>
+                                <input class="form-check-input m-3 hidden" type="checkbox" value="0" id="task-complited">
                             </td>
                             <td>
-                                <button class="btn btn-danger bnt-delete" onclick="deleteTask(<?= $task['id'];?>)" data-id="<?= $task['id'];?>">
+                                <button class="btn btn-danger bnt-delete" onclick="deleteTask(<?= $task['id']?>)">
                                     Удалить
                                 </button>
                             </td>
@@ -96,12 +96,12 @@ Page::part('nav', 'Задачи', $data['user']);
                 <div style="text-align: center">
                     <?php for ($pageNum = 1; $pageNum <= $data['pagesCount']; $pageNum++): ?>
                         <a href="<?= $pageNum === 1 ? '/tasks' : '?page='.$pageNum ?>"><?= $pageNum ?></a>
-                    <?php endfor; ?>
+                    <?php endfor ?>
                 </div>
-            <?php endif;?>
+            <?php endif?>
         <?php else:?>
             <span>Добавьте задачи</span>
-        <?php endif; ?>
+        <?php endif ?>
     </div>
 </div>
 <?php

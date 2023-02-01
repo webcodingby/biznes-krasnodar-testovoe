@@ -11,7 +11,7 @@ class DataBase
     /**
      * Объект PDO.
      */
-    public static $dbh = null;
+    public static ?PDO $dbh = null;
 
     /**
      * Statement Handle.
@@ -21,12 +21,12 @@ class DataBase
     /**
      * Выполняемый SQL запрос.
      */
-    public static $query = '';
+    public static string $query = '';
 
     /**
      * Подключение к БД.
      */
-    public static function getDbh()
+    public static function getDbh(): ?PDO
     {
         if (!self::$dbh) {
             try {
@@ -95,84 +95,78 @@ class DataBase
         return (empty($result)) ? $default : $result;
     }
 
-    public static function insertTask($task,$date,$user_id,$active,$complited)
+    public static function insert($data, $tableAndColumn, $valuesColumn): string
+    {
+        $sql = "INSERT INTO $tableAndColumn  VALUES $valuesColumn";
+
+        $stmt = self::getDbh()->prepare($sql);
+        $stmt->execute($data);
+        return self::getDbh()->lastInsertId();
+    }
+
+    public static function getRequest($table, $where = '', $order = '',$limit = ''): array
+    {
+        $sql = "SELECT * FROM $table $where $order $limit";
+        return self::getDbh()->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function insertTask($task,$date,$user_id,$active,$done): string
     {
         $data = [
             'task' => $task,
             'date' => $date,
             'user_id' => $user_id,
             'active' => $active,
-            'complited' => $complited,
+            'done' => $done,
         ];
-        $sql = "INSERT INTO tasks (task, date, user_id, active, complited) VALUES (:task, :date, :user_id, :active, :complited)";
-        $stmt = self::getDbh()->prepare($sql);
-        $stmt->execute($data);
+        $sql = "INSERT INTO tasks (task, date, user_id, active, done) VALUES (:task, :date, :user_id, :active, :done)";
+        self::getDbh()->prepare($sql)->execute($data);
         return self::getDbh()->lastInsertId();
     }
 
     public static function getTask($id): array
     {
-        $sql = "SELECT * FROM tasks WHERE id = :id";
-        $stmt = self::getDbh()->prepare($sql);
-        $stmt->bindValue(":id", $id);
-        $stmt->execute();
-        $value = $stmt->fetch(PDO::FETCH_COLUMN);
-        return $value;
+        $sql = "SELECT * FROM tasks WHERE id = $id";
+        return self::getDbh()->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function updateTask($data): string
+    public static function updateTask($data, $id): string
     {
-        $data = [
-            'id' => $data['id'],
-            'task' => $data['task'],
-            'date' => $data['date'],
-            'user_id' => $data['user_id'],
-            'active' => $data['active'],
-            'complited' => $data['complited'],
-        ];
-        $sql = "UPDATE tasks SET task=:task, date=:date, user_id=:user_id,active=:active, complited=:complited WHERE id = :id";
+        $task = $data['task'];
+        $date = $data['date'];
+        $user_id = $data['user_id'];
+        $active = $data['active'];
+        $done = $data['done'];
+        $sql = "UPDATE tasks SET `task`=:task,`date`=:date,`user_id`=:user_id,`active`=:active,`done`=:done WHERE `id` = $id";
         $stmt = self::getDbh()->prepare($sql);
-        $stmt->bindValue(":id", $data['id']);
-        $stmt->bindValue(":task", $data['task']);
-        $stmt->bindValue(":date", $data['date']);
-        $stmt->bindValue(":user_id", $data['user_id']);
-        $stmt->bindValue(":active", $data['active']);
-        $stmt->bindValue(":complited", $data['complited']);
+        $stmt->bindValue(":id", $id);
+        $stmt->bindValue(":task", $task);
+        $stmt->bindValue(":date", $date);
+        $stmt->bindValue(":user_id", $user_id);
+        $stmt->bindValue(":active", $active);
+        $stmt->bindValue(":done",$done);
 
         $stmt->execute();
 
         return 'Задача обновлена!';
     }
 
-    public static function getRequest($table, $where = '', $order = '',$limit = ''): array
-    {
-        $sql = "SELECT * FROM $table $where $order $limit";
-        $stmt = self::getDbh()->query($sql);
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $data;
-    }
-
     public static function getTasks($table, $id, $offset, $itemsPerPage): array
     {
         $sql = "SELECT * FROM $table WHERE user_id=`$id` ORDER BY date LIMIT $offset,$itemsPerPage";
-        $stmt = self::getDbh()->query($sql);
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $data;
+        return self::getDbh()->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function getTasksCount($table, $where = '', $order = '') : array
     {
         $sql = "SELECT COUNT(*) AS count FROM $table $where $order";
-        $stmt = self::getDbh()->query($sql);
-        $data = $stmt->fetchAll();
-        return $data;
+        return self::getDbh()->query($sql)->fetchAll();
     }
 
 
-    public static function deleteTask($id)
+    public static function deleteTask($id): bool|int
     {
         $sql = "DELETE FROM `tasks` WHERE `id` = $id";
-        $affectedRowsNumber = self::getDbh()->exec($sql);
-        return $affectedRowsNumber;
+        return self::getDbh()->exec($sql);
     }
 }
