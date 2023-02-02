@@ -102,15 +102,16 @@ function formData(){
     formData.append('done', $('#done').val());
 }
 
-function okTask(id)
+function okTask(id, done)
 {
-    if (confirm("Вы уверены что хотите выполнить задачу?")) {
+    let text = (+done === 1) ? "Задача выполнена?" : "Вы поторопились?";
+    if (confirm(text)) {
         $.ajax({
             type: ('PATCH'),
             url: (`/api/task/${id}`),
             data: {
                 "id": id,
-                "done": 1,
+                "done": done,
             },
             success: function (data) {
                 location.reload();

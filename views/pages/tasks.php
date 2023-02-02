@@ -119,11 +119,8 @@ Page::part('nav', 'Задачи', $data['user']);
                             </td>
                             <td>
                                 <label class="form-check-label" for="task-done">
-                                    <button
-                                            class="btn btn-success btn-done"
-                                            onclick="okTask(<?= $task['id']?>)"
-                                            data-done="<?=$valDone?>"
-                                    >
+                                    <button class="btn btn-success btn-done"
+                                            onclick="okTask('<?=$idInputValue?>','<?=$valDone?>')">
                                         <?php if((int)$valDone === 0 ):?>
                                             Не выполнено
                                         <?php else: ?>
