@@ -27,7 +27,7 @@ Page::part('nav', 'Панель администратора', $data['user']);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($data['result'] as $user):?>
+                <?php foreach ($data['data'] as $user):?>
                     <tr>
                         <td><?= $user['email']?></td>
                         <?php if(!isset($user['count'])):?>

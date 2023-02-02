@@ -26,11 +26,11 @@ class AdminControllers
                                                 AS count FROM users 
                                                 JOIN tasks 
                                                 ON users.id = tasks.user_id 
-                                                GROUP BY email;");
-        foreach ($data['email'] as $i => $iValue) {
-            $iValue[$i]['count'] = 0;
-        }
-        $data['result'] = array_merge($data['email'], $data['data']);
+                                                GROUP BY email ORDER BY count DESC;");
+//        foreach ($data['email'] as $i => $iValue) {
+//            $iValue[$i]['count'] = 0;
+//        }
+//        $data['result'] = array_merge($data['email'], $data['data']);
         $resultDB = DataBase::getAll("SELECT COUNT(*) AS cnt FROM `users` ");
         $enterRow = (int)$resultDB[0]['cnt'];
         $data['page'] = ceil($enterRow/$itemsPerPage);
