@@ -7,7 +7,6 @@ namespace App\Controllers;
 use App\Core\DataBase;
 use App\Core\DB;
 use App\Core\Page;
-use App\Models\Task;
 use JetBrains\PhpStorm\ArrayShape;
 
 class TasksControllers
@@ -23,7 +22,7 @@ class TasksControllers
     {
         $itemsPerPage = 5;
         $offset = !empty($_GET['page'])?(($_GET['page']-1)*$itemsPerPage):0;
-        $tasks = DataBase::getRequest('tasks', "WHERE user_id=$id","ORDER BY date","LIMIT $offset,$itemsPerPage");
+        $tasks = DataBase::getRequest('tasks', "WHERE user_id=$id","ORDER BY date DESC","LIMIT $offset,$itemsPerPage");
         $tasksPage = DataBase::getTasksCount("tasks", "WHERE user_id=$id");
         $enterRow = (int)$tasksPage[0]['count'];
         $user = DataBase::getRequest("users", "WHERE id=$id");

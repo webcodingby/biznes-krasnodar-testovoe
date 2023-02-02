@@ -25,7 +25,7 @@ class TaskControllers
     {
 
         $task = $data['task'];
-        $date = $data['date'];
+        $date = date('Y-m-d', strtotime($data['date']));
         $user_id = (int)$data['user_id'];
         $active = $data['active'] ?? '0';
         $active = (int)$active;
@@ -95,6 +95,7 @@ class TaskControllers
      */
     #[NoReturn] public static function updateTask($form, $id): void
     {
+
         $dataDb = DataBase::getTask($id);
         $formNew = array_merge($dataDb[0], $form);
 

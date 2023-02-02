@@ -38,6 +38,35 @@ Page::part('nav', 'Задачи', $data['user']);
                 <div id="task_btn" onclick="postTask()" class="btn btn-primary mt-2 d-flex justify-content-center align-content-center">Добавить</div>
             </div>
         </div>
+        <div class="mb-4 col-12 d-flex align-items-center hidden" id="edit-task_form">
+            <input class="form-check-input" type="hidden" value="" id="id-edit">
+            <input class="form-check-input" type="hidden" value="<?=$data['user']['id']?>" id="user_id-edit">
+            <div class="col-5 me-2">
+                <label for="task-edit" class="form-label">Задача:</label>
+                <input type="text" name="task" class="form-control" id="task-edit" required>
+            </div>
+            <div class="col-3 ms-2">
+                <label for="date-edit" class="form-label">Дата:</label>
+                <input type="date" name="date" class="form-control" id="date-edit" required>
+            </div>
+            <div class="form-check col-2 d-flex flex-wrap align-items-center">
+                <div class="d-flex align-items-center">
+                    <input class="form-check-input m-3" type="checkbox" value="0" id="active-edit">
+                    <label class="form-check-label" for="active-edit">
+                        Важное
+                    </label>
+                </div>
+                <div class="d-flex align-items-center">
+                    <input class="form-check-input m-3" type="checkbox" value="0" id="done-edit">
+                    <label class="form-check-label" for="done-edit">
+                        Выполнено
+                    </label>
+                </div>
+            </div>
+            <div class="col-2 d-flex justify-content-center align-items-center">
+                <div id="taskEdit_btn" onclick="saveTask()" class="btn btn-primary mt-2 d-flex justify-content-center align-content-center">Обновить</div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <h3>Задачи</h3>
@@ -55,25 +84,36 @@ Page::part('nav', 'Задачи', $data['user']);
                 <tbody id="table_tasks">
                     <?php foreach ($data['data'] as $task):?>
                         <?php
-                            $active = ($task['active']) ? 'table-primary' : '';
+                            $idInputValue = $task['id'];
+                            $taskInputValue = $task['task'];
+                            $dateInputValue = date('Y-m-d', strtotime($task['date']));
+                            $activeInputValue = $task['active'];
+                            $doneInputValue = $task['done'];
+                            $active = ($task['active']) ? 'active-task' : '';
                             $valActive = ($task['active']) ? '0' : '1';
-                            $done = ($task['done']) ? 'text-decoration-line-through' : '';
+                            $done = ($task['done']) ? 'done-task' : '';
                             $valDone = ($task['done']) ? '0' : '1';
+                            $task['date']= date('d.m.Y', strtotime($task['date']));
                         ?>
                         <tr class="task-wrap <?= $active?> <?=$done?>">
                             <td>
                                 <span class="task-text"><?= $task['task']?></span>
-                                <input type="text" class="hidden input-task" value="<?= $task['task']?>">
                             </td>
                             <td>
                                 <span class="task-date"><?= $task['date']?></span>
-                                <input type="date" class="hidden input-date" value ="<?= $task['date']?>">
                             </td>
                             <td>
-                                <button class="btn btn-warning btn-edit" onclick="editTask(<?= $task['id']?>)">
+                                <button class="btn btn-warning btn-edit"
+                                        onclick="selectTask(
+                                                    '<?=$idInputValue?>',
+                                                    '<?=$taskInputValue?>',
+                                                    '<?=$dateInputValue?>',
+                                                    '<?=$activeInputValue?>',
+                                                    '<?=$doneInputValue?>'
+                                                )">
                                     Редактировать
                                 </button>
-                                <button class="btn btn-info btn-ok hidden" onclick="saveTask(<?= $task['id']?>)">
+                                <button class="btn btn-info btn-ok hidden" onclick="editTask(<?= $task['id']?>)">
                                     Сохранить
                                 </button>
                             </td>
@@ -91,7 +131,7 @@ Page::part('nav', 'Задачи', $data['user']);
                                         <?php endif ?>
                                     </button>
                                 </label>
-                                <input class="form-check-input m-3 hidden" type="checkbox" value="0" id="task-complited">
+                                <input class="form-check-input m-3 hidden" type="checkbox" value="0" id="task-done">
                             </td>
                             <td>
                                 <button class="btn btn-danger bnt-delete" onclick="deleteTask(<?= $task['id']?>)">

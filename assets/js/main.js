@@ -1,3 +1,4 @@
+let id = null;
 function getTasksAjax()
 {
     $.ajax({
@@ -39,9 +40,9 @@ function postTask()
         },
         success: function (data) {
             if (confirm("Вы добавили задачу")) {
-                //location.reload();
+                location.reload();
             }else{
-                //location.reload();
+                alert('Произошла ошибка на сервере. Попробуйте еще раз')
             }
         },
         error: function (data) {
@@ -73,7 +74,7 @@ function deleteTask(id)
 
 function editTask(id)
 {
-    if (confirm("Вы уверены что хотите удалить задачу?")) {
+    if (confirm("Вы уверены что хотите изменить задачу?")) {
         $.ajax({
             type: ('PATCH'),
             url: (`/api/task/${id}`),
@@ -91,6 +92,16 @@ function editTask(id)
     }
 }
 
+function formData(){
+    let formData = new FormData();
+    formData.append('id', $('#id').val());
+    formData.append('user_id', $('#user_id').val());
+    formData.append('task', $('#task').val());
+    formData.append('date', $('#date').val());
+    formData.append('active', $('#active').val());
+    formData.append('done', $('#done').val());
+}
+
 function okTask(id)
 {
     if (confirm("Вы уверены что хотите выполнить задачу?")) {
@@ -102,7 +113,7 @@ function okTask(id)
                 "done": 1,
             },
             success: function (data) {
-                //location.reload();
+                location.reload();
             },
             error: function (data) {
                 console.log('An error occurred.');
@@ -111,23 +122,48 @@ function okTask(id)
         });
     }
 }
+function selectTask(id, task, date, active, done)
+{
+    id=id;
+    $('#edit-task_form').removeClass('hidden');
+    $('#task_form').addClass('hidden');
+    $('#id-edit').val(id);
+    $('#task-edit').val(task);
+    $('#date-edit').val(date);
+    $('#active-edit').val(active);
+    if(+$('#active-edit').val() === 1)
+    {
+        $('#active-edit').prop('checked', true);
+    }else{
+        $('#active-edit').prop('checked', false);
+    }
+    $('#done-edit').val(done);
+    if(+$('#done-edit').val() === 1)
+    {
+        $('#done-edit').prop('checked', true);
+    }else{
+        $('#done-edit').prop('checked', false);
+    }
+    let attr = $('#taskEdit_btn').attr('onclick', `saveTask(${id})`);
+    console.log(attr);
+}
 
 function saveTask(id)
 {
-    $('#task').val()
-    $('#date').val()
+    id = $('#id-edit').val();
+    const data = {
+        id: id,
+        user_id: $('#user_id-edit').val(),
+        task: $('#task-edit').val(),
+        date: $('#date-edit').val(),
+        active: $('#active-edit').val(),
+        done: $('#done-edit').val(),
+    }
     if (confirm("Сохранить изменения?")) {
         $.ajax({
             type: ('PATCH'),
             url: (`/api/task/${id}`),
-            data: {
-                id: id,
-                user_id: $('#user_id').val(),
-                task: $('#task').val(),
-                date: $('#date').val(),
-                active: $('#active').val(),
-                complited: $('#complited').val(),
-            },
+            data: data,
             success: function (data) {
                 location.reload();
             },

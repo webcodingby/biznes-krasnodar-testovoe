@@ -130,25 +130,10 @@ class DataBase
         return self::getDbh()->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function updateTask1($data, $id): string
-    {
-        $task = $data['task'];
-        $date = $data['date'];
-        $user_id = $data['user_id'];
-        $active = $data['active'];
-        $done = $data['done'];
-        $sql = "UPDATE tasks SET `task`=$task,`date`=$date,`user_id`=$user_id,`active`=$active,`done`=$done WHERE `id` = $id";
-        $stmt = self::getDbh()->prepare($sql);
-
-        return $stmt->execute($data);
-    }
-
     public static function updateTask($form, $id): string
     {
-        $data = self::getDbh()->prepare('
-                                            UPDATE tasks 
-                                            SET task=:task, date=:date, user_id=:user_id, active=:active, done=:done  
-                                            WHERE id = :id');
+        $sql = 'UPDATE tasks SET task=:task, date=:date, user_id=:user_id, active=:active, done=:done WHERE id = :id';
+        $data = self::getDbh()->prepare($sql);
         $data->execute(array(
             ':task' => $form['task'],
             ':date' => $form['date'],
@@ -170,7 +155,7 @@ class DataBase
     public static function getId($table, $where, $id): int
     {
         $sql = "SELECT id FROM $table WHERE $where=`$id`";
-        return self::getDbh()->query($sql)->fetch(PDO::FETCH_ASSOC);
+        return self::getDbh()->query($sql);
     }
 
     public static function getTasksCount($table, $where = '', $order = '') : array

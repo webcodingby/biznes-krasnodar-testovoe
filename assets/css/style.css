@@ -2,6 +2,16 @@
     display:none !important;
 }
 
+.active-task{
+    background: linear-gradient(7deg, #5ae7ec, #cf92d9);
+    text-decoration: underline;
+}
+
+.done-task{
+    background: linear-gradient(-5deg, #cbec5a, #ec9c51);
+    text-decoration: line-through;
+}
+
 a{
     color: #222;
 }
